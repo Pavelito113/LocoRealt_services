@@ -1,0 +1,77 @@
+﻿@model GeoFiltersViewModel
+
+<div class="card mb-3">
+    <div class="card-header py-2">
+        <h6 class="mb-0">География</h6>
+    </div>
+    <div class="card-body p-2">
+        <form id="geoFilterForm" method="get">
+            <div class="row g-2">
+                <!-- Страна -->
+                <div class="col-md-4">
+                    <label class="form-label small">Страна</label>
+                    <select class="form-select form-select-sm" name="countryId" id="countrySelect"
+                            onchange="this.form.submit()">
+                        <option value="">Все страны</option>
+                        @foreach (var country in Model.Countries)
+                        {
+                            <option value="@country.Value"
+                                    selected="@(country.Value == Model.SelectedCountryId?.ToString())"
+                                    data-count="@(Model.CountryCounts.GetValueOrDefault(long.Parse(country.Value)))">
+                                @country.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Регион -->
+                <div class="col-md-4">
+                    <label class="form-label small">Регион</label>
+                    <select class="form-select form-select-sm" name="regionId" id="regionSelect"
+                            onchange="this.form.submit()"
+                            @(Model.SelectedCountryId == null ? "disabled" : "")>
+                        <option value="">Все регионы</option>
+                        @foreach (var region in Model.Regions)
+                        {
+                            <option value="@region.Value"
+                                    selected="@(region.Value == Model.SelectedRegionId?.ToString())"
+                                    data-count="@(Model.RegionCounts.GetValueOrDefault(long.Parse(region.Value)))">
+                                @region.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Город -->
+                <div class="col-md-4">
+                    <label class="form-label small">Город</label>
+                    <select class="form-select form-select-sm" name="cityId" id="citySelect"
+                            onchange="this.form.submit()"
+                            @(Model.SelectedRegionId == null ? "disabled" : "")>
+                        <option value="">Все города</option>
+                        @foreach (var city in Model.Cities)
+                        {
+                            <option value="@city.Value"
+                                    selected="@(city.Value == Model.SelectedCityId?.ToString())"
+                                    data-count="@(Model.CityCounts.GetValueOrDefault(long.Parse(city.Value)))">
+                                @city.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Улица -->
+            <div class="row mt-2">
+                <div class="col-12">
+                    <label class="form-label small">Улица/Адрес</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control form-control-sm" name="street"
+                               value="@Model.TxtAddress" placeholder="Введите адрес">
+                        <button type="submit" class="btn btn-primary btn-sm">Применить</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

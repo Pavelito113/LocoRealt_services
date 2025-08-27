@@ -1,0 +1,393 @@
+﻿@model LocoRealt.Models.CreateListingViewModel
+@{
+    ViewData["Title"] = "Редактирование объявления";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="ListingId" />
+
+    <!-- Основная информация -->
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Заголовок -->
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Название</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <!-- Описание -->
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Описание</label>
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <!-- SEO описание -->
+            <div class="mb-3">
+                <label asp-for="MemSeodescription" class="form-label">SEO Описание</label>
+                <textarea asp-for="MemSeodescription" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="MemSeodescription" class="text-danger"></span>
+            </div>
+
+            <!-- SEO ключевые слова -->
+            <div class="mb-3">
+                <label asp-for="MemSeokeywords" class="form-label">SEO Ключевые слова</label>
+                <input asp-for="MemSeokeywords" class="form-control" />
+                <span asp-validation-for="MemSeokeywords" class="text-danger"></span>
+            </div>
+
+            <!-- Цена -->
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label">Цена</label>
+                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Тип сделки -->
+            <div class="mb-3">
+                <label asp-for="DealType" class="form-label">Тип сделки</label>
+                <select asp-for="DealType" class="form-select">
+                    <option value="Продажа">Продажа</option>
+                    <option value="Аренда">Аренда</option>
+                </select>
+            </div>
+
+            <!-- Категория -->
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label">Категория</label>
+                <select asp-for="CategoryId" class="form-select" id="category-select">
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <option value="@category.CategoryId" selected="@(category.CategoryId == Model.CategoryId)">@category.TxtTitle</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Подкатегория -->
+            <div class="mb-3">
+                <label asp-for="SubCategoryId" class="form-label">Подкатегория</label>
+                <select asp-for="SubCategoryId" class="form-select" id="subcategory-select">
+                    @foreach (var subcategory in ViewBag.SubCategories)
+                    {
+                        if (subcategory.CategoryId == Model.CategoryId)
+                        {
+                            <option value="@subcategory.SubCategoryId" selected="@(subcategory.SubCategoryId == Model.SubCategoryId)">@subcategory.TxtTitle</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Тип объявления -->
+            <div class="mb-3">
+                <label asp-for="ListingTypeId" class="form-label">Тип объявления</label>
+                <select asp-for="ListingTypeId" class="form-select">
+                    @foreach (var type in ViewBag.ListingTypes)
+                    {
+                        <option value="@type.ListingTypeId" selected="@(type.ListingTypeId == Model.ListingTypeId)">@type.TxtTitle</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Статус объявления -->
+            <div class="mb-3">
+                <label asp-for="ListingStatusId" class="form-label">Статус</label>
+                <select asp-for="ListingStatusId" class="form-select">
+                    @foreach (var status in ViewBag.ListingStatuses)
+                    {
+                        <option value="@status.ListingStatusId" selected="@(status.ListingStatusId == Model.ListingStatusId)">@status.TxtTitle</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основные характеристики -->
+    <div class="card mb-3">
+        <div class="card-header">Основные характеристики</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="Rooms" class="form-label">Количество комнат</label>
+                        <input asp-for="Rooms" class="form-control" type="number" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="Floor" class="form-label">Этаж</label>
+                        <input asp-for="Floor" class="form-control" type="number" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="TotalArea" class="form-label">Общая площадь (м²)</label>
+                        <input asp-for="TotalArea" class="form-control" type="number" step="0.1" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="LandArea" class="form-label">Площадь участка (соток)</label>
+                        <input asp-for="LandArea" class="form-control" type="number" step="0.1" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check mb-3">
+                        <input asp-for="IsBargain" class="form-check-input" />
+                        <label asp-for="IsBargain" class="form-check-label">Торг</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check mb-3">
+                        <input asp-for="IsLongTerm" class="form-check-input" />
+                        <label asp-for="IsLongTerm" class="form-check-label">Долгосрочная аренда</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Коммуникации -->
+    <div class="card mb-3">
+        <div class="card-header">Коммуникации</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-check mb-3">
+                        <input asp-for="HasGasHeating" class="form-check-input" />
+                        <label asp-for="HasGasHeating" class="form-check-label">Газовое отопление</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mb-3">
+                        <input asp-for="HasCentralWater" class="form-check-input" />
+                        <label asp-for="HasCentralWater" class="form-check-label">Центральный водопровод</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mb-3">
+                        <input asp-for="HasCentralHeating" class="form-check-input" />
+                        <label asp-for="HasCentralHeating" class="form-check-label">Центральное отопление</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mb-3">
+                        <input asp-for="HasCentralSCanalisation" class="form-check-input" />
+                        <label asp-for="HasCentralSCanalisation" class="form-check-label">Центральная канализация</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-check mb-3">
+                        <input asp-for="HasInternet" class="form-check-input" />
+                        <label asp-for="HasInternet" class="form-check-label">Интернет</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mb-3">
+                        <input asp-for="HasParking" class="form-check-input" />
+                        <label asp-for="HasParking" class="form-check-label">Парковка</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Местоположение -->
+    <div class="card mb-3">
+        <div class="card-header">Местоположение</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="CountryId" class="form-label">Страна</label>
+                        <select asp-for="CountryId" class="form-select" id="country-select">
+                            @foreach (var country in ViewBag.Countries)
+                            {
+                                <option value="@country.CountryId" selected="@(country.CountryId == Model.CountryId)">@country.TxtTitle</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="RegionId" class="form-label">Регион</label>
+                        <select asp-for="RegionId" class="form-select" id="region-select">
+                            @foreach (var region in ViewBag.Regions)
+                            {
+                                if (region.CountryId == Model.CountryId)
+                                {
+                                    <option value="@region.RegionId" selected="@(region.RegionId == Model.RegionId)">@region.TxtTitle</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="CityId" class="form-label">Город</label>
+                        <select asp-for="CityId" class="form-select" id="city-select">
+                            @foreach (var city in ViewBag.Cities)
+                            {
+                                if (city.RegionId == Model.RegionId)
+                                {
+                                    <option value="@city.CityId" selected="@(city.CityId == Model.CityId)">@city.TxtTitle</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label">Адрес</label>
+                <input asp-for="Address" class="form-control" />
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Latitude" class="form-label">Широта</label>
+                        <input asp-for="Latitude" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Longitude" class="form-label">Долгота</label>
+                        <input asp-for="Longitude" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="ShowOnGoogleMap" class="form-check-input" />
+                <label asp-for="ShowOnGoogleMap" class="form-check-label">Показывать на карте Google</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Специфические характеристики -->
+    <div class="card mb-3" id="special-fields">
+        <div class="card-header">Специфические характеристики</div>
+        <div class="card-body">
+            @if (Model.CategoryId == 1)
+            {
+                <!-- Квартира -->
+                <partial name="_EditFlat" model="Model" />
+            }
+            else if (Model.CategoryId == 2)
+            {
+                <!-- Дом -->
+                <partial name="_EditHouse" model="Model" />
+            }
+            else if (Model.CategoryId == 3)
+            {
+                <!-- Коммерция -->
+                <partial name="_EditCommercial" model="Model" />
+            }
+            else if (Model.CategoryId == 4)
+            {
+                <!-- Земля -->
+                <partial name="_EditLandPlot" model="Model" />
+            }
+        </div>
+    </div>
+
+    <!-- Изображения -->
+    <div class="card mb-3">
+        <div class="card-header">Фотографии</div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Добавить новые фото</label>
+                <input type="file" name="newImages" multiple class="form-control" accept="image/*" />
+            </div>
+
+            @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+            {
+                <div class="row">
+                    @foreach (var img in Model.ExistingImages)
+                    {
+                        <div class="col-md-3 mb-3">
+                            <div class="card">
+                                <img src="~/images/listings/@img.TxtImageUrl" class="card-img-top" alt="Фото объекта">
+                                <div class="card-body text-center">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="deleteImages" value="@img.ImageId" class="form-check-input" id="delete-@img.ImageId" />
+                                        <label class="form-check-label" for="delete-@img.ImageId">Удалить</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Нет загруженных фотографий</p>
+            }
+        </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> Применить (сохранить изменения)
+        </button>
+        <a asp-action="Delete" asp-route-id="@Model.ListingId" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить это объявление?')">
+            <i class="bi bi-trash"></i> Удалить объявление
+        </a>
+        <a asp-controller="ManageListings" asp-action="Copy" asp-route-id="@Model.ListingId" class="btn btn-primary" title="Копировать объявление">
+            <i class="bi bi-files"></i> Дублировать объявление
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Динамическая загрузка подкатегорий при изменении категории
+        $('#category-select').change(function() {
+            var categoryId = $(this).val();
+            $.get('/Listings/GetSubCategories', { categoryId: categoryId }, function(data) {
+                var options = '';
+                $.each(data, function(index, item) {
+                    options += '<option value="' + item.subCategoryId + '">' + item.txtTitle + '</option>';
+                });
+                $('#subcategory-select').html(options);
+            });
+        });
+
+        // Динамическая загрузка регионов при изменении страны
+        $('#country-select').change(function() {
+            var countryId = $(this).val();
+            $.get('/Listings/GetRegions', { countryId: countryId }, function(data) {
+                var options = '';
+                $.each(data, function(index, item) {
+                    options += '<option value="' + item.regionId + '">' + item.txtTitle + '</option>';
+                });
+                $('#region-select').html(options);
+                $('#city-select').html('<option value="">Выберите город</option>');
+            });
+        });
+
+        // Динамическая загрузка городов при изменении региона
+        $('#region-select').change(function() {
+            var regionId = $(this).val();
+            $.get('/Listings/GetCities', { regionId: regionId }, function(data) {
+                var options = '';
+                $.each(data, function(index, item) {
+                    options += '<option value="' + item.cityId + '">' + item.txtTitle + '</option>';
+                });
+                $('#city-select').html(options);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,63 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using LocoRealt.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle me-1"></i> @User.Identity?.Name
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fas fa-cog me-1"></i> Админ-панель
+                        </a>
+                    }
+                    else if (User.IsInRole("Agent"))
+                    {
+                        <a class="dropdown-item" asp-area="Agent" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fas fa-user-tie me-1"></i> Кабинет агента
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="dropdown-item" asp-area="User" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fas fa-user me-1"></i> Личный кабинет
+                        </a>
+                    }
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="@Url.Action("Index", "Home")"
+                          method="post"
+                          class="px-3">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt me-1"></i> Выйти
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">
+                <i class="fas fa-user-plus me-1"></i> Регистрация
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+                <i class="fas fa-sign-in-alt me-1"></i> Вход
+            </a>
+        </li>
+    }
+</ul>

@@ -1,0 +1,98 @@
+@model LocoRealt.Models.ListingsViewModel
+
+<div class="mb-3 astro-filters-collapse">
+    <button type="button" class="astro-filters-toggle btn btn-outline-secondary btn-sm mb-2" 
+            aria-expanded="true" aria-controls="astroFiltersPanel">
+        <i class="fas fa-angle-down me-1"></i> Фильтр
+    </button>
+   <div id="astroFiltersPanel" class="astro-filters-panel show">
+        <form id="filterForm" method="get">
+            <input type="hidden" name="dealType" value="@Model.DealType" />
+
+            <!-- Кнопки DealType -->
+            <div class="d-flex btn-toggle-group gap-2 mb-2 align-items-center">
+                @foreach (var dealType in Model.DealTypes)
+                {
+                    var isActive = dealType.ToLower() == Model.DealType?.ToLower();
+                    var baseClass = isActive ? "btn-primary" : "btn-outline-secondary";
+                    
+                    <a class="btn btn-sm flex-fill @baseClass"
+                       href="@Url.Action("Index", "Home", new {
+                           dealType = dealType,
+                           CountryId = Model.CountryId,
+                           RegionId = Model.RegionId,
+                           CityId = Model.CityId,
+                           Street = Model.Street,
+                           CategoryId = Model.CategoryId,
+                           SubCategoryId = Model.SubCategoryId,
+                           MinPrice = Model.MinPrice,
+                           MaxPrice = Model.MaxPrice,
+                           MinRooms = Model.MinRooms,
+                           MaxRooms = Model.MaxRooms,
+                           MinArea = Model.MinArea,
+                           MaxArea = Model.MaxArea,
+                           HasGasHeating = Model.HasGasHeating,
+                           HasCentralWater = Model.HasCentralWater,
+                           HasCentralHeating = Model.HasCentralHeating,
+                           HasCentralScanalisation = Model.HasCentralScanalisation,
+                           HasInternet = Model.HasInternet,
+                           HasParking = Model.HasParking,
+                           OrderBy = Model.OrderBy
+                       })">
+                        @dealType
+                    </a>
+                }
+            </div>
+            <!-- Цена и комнаты -->
+            <div class="d-flex gap-2 mb-2">
+                <input type="number" name="minPrice" placeholder="Цена от" value="@Model.MinPrice" class="form-control form-control-sm" />
+                <input type="number" name="maxPrice" placeholder="до" value="@Model.MaxPrice" class="form-control form-control-sm" />
+                <input type="number" name="minRooms" placeholder="Комнат от" value="@Model.MinRooms" class="form-control form-control-sm" min="1" />
+                <input type="number" name="maxRooms" placeholder="до" value="@Model.MaxRooms" class="form-control form-control-sm" min="1" />
+            </div>
+
+            <!-- Площадь -->
+            <div class="d-flex gap-2 mb-2">
+                <input type="number" step="0.01" name="minArea" placeholder="Площадь от" value="@Model.MinArea" class="form-control form-control-sm" />
+                <input type="number" step="0.01" name="maxArea" placeholder="до" value="@Model.MaxArea" class="form-control form-control-sm" />
+            </div>
+
+            <!-- Дополнительные фильтры -->
+            <div class="d-flex flex-wrap gap-2 mb-2 small align-items-center">
+                @foreach (var (id, name, val) in new[] {
+                    ("HasGasHeating", "Газ", Model.HasGasHeating),
+                    ("HasCentralWater", "Вода", Model.HasCentralWater),
+                    ("HasCentralHeating", "Отопление", Model.HasCentralHeating),
+                    ("HasCentralScanalisation", "Канализация", Model.HasCentralScanalisation),
+                    ("HasInternet", "Интернет", Model.HasInternet),
+                    ("HasParking", "Парковка", Model.HasParking)
+                })
+                {
+                    <div class="form-check form-check-inline m-0">
+                        <input class="form-check-input" type="checkbox" id="@id" name="@id" value="true" checked="@val" />
+                        <label class="form-check-label" for="@id">@name</label>
+                    </div>
+                }
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex gap-2 align-items-center">
+                <button type="submit" class="btn btn-primary btn-sm flex-fill">Показать</button>
+                <button type="button" id="resetFilterBtn" class="btn btn-outline-secondary btn-sm">Сбросить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('resetFilterBtn')?.addEventListener('click', function () {
+            const form = document.getElementById('filterForm');
+            if (!form) return;
+            form.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
+            form.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+            form.querySelector('input[name="dealType"]').value = 'sale';
+            form.submit();
+        });
+    </script>
+}

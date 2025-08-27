@@ -1,0 +1,47 @@
+﻿@model LocoRealt.Models.SpecCommercial
+
+<table class="table table-sm table-bordered">
+    <tbody>
+        <tr>
+            <th>Назначение</th>
+            <td>@(Model.Purpose ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Площадь</th>
+            <td>@(Model.TotalArea?.ToString("0.##") ?? "-") м²</td>
+        </tr>
+        <tr>
+            <th>Этаж</th>
+            <td>
+                @if (Model.FloorNum.HasValue && Model.TotalFloors.HasValue)
+                {
+                    @($"{Model.FloorNum} / {Model.TotalFloors}")
+                }
+                else
+                {
+                    @:"-"
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>Состояние</th>
+            <td>@(Model.Condition ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Отопление</th>
+            <td>@(Model.HasHeating == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Водоснабжение</th>
+            <td>@(Model.HasWater == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Канализация</th>
+            <td>@(Model.HasSewerage == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Охрана</th>
+            <td>@(Model.HasSecurity == true ? "Есть" : "Нет")</td>
+        </tr>
+    </tbody>
+</table>

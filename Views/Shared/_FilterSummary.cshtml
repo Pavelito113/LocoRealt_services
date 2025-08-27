@@ -1,0 +1,142 @@
+﻿@using LocoRealt.Models
+@using Microsoft.AspNetCore.Routing
+@{
+    var filters = ViewBag.CurrentFilters as RouteValueDictionary ?? new RouteValueDictionary();
+
+    // Безопасное получение параметров с проверкой на null
+    var countryId = filters.TryGetValue("countryId", out var cId) ? (long?)cId : null;
+    var regionId = filters.TryGetValue("regionId", out var rId) ? (long?)rId : null;
+    var cityId = filters.TryGetValue("cityId", out var ctId) ? (long?)ctId : null;
+    var street = filters.TryGetValue("street", out var st) ? st as string : null;
+    var categoryId = filters.TryGetValue("categoryId", out var catId) ? (long?)catId : null;
+    var subCategoryId = filters.TryGetValue("subCategoryId", out var subCatId) ? (long?)subCatId : null;
+    var dealType = (filters.TryGetValue("dealType", out var dt) ? dt as string : "sale")?.ToLower();
+
+    // Получение данных с проверкой на null
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var subCategories = ViewBag.SubCategories as List<SubCategory> ?? new List<SubCategory>();
+    var countries = ViewBag.Countries as List<Country> ?? new List<Country>();
+    var regions = ViewBag.Regions as List<Region> ?? new List<Region>();
+    var cities = ViewBag.Cities as List<City> ?? new List<City>();
+
+    // Безопасные методы получения имен
+    string GetCategoryName(long? id) => id.HasValue ? categories.FirstOrDefault(c => c.CategoryId == id)?.TxtTitle ?? "" : "";
+    string GetSubCategoryName(long? id) => id.HasValue ? subCategories.FirstOrDefault(sc => sc.SubCategoryId == id)?.TxtTitle ?? "" : "";
+    string GetCountryName(long? id) => id.HasValue ? countries.FirstOrDefault(c => c.CountryId == id)?.TxtTitle ?? "" : "";
+    string GetRegionName(long? id) => id.HasValue ? regions.FirstOrDefault(r => r.RegionId == id)?.TxtTitle ?? "" : "";
+    string GetCityName(long? id) => id.HasValue ? cities.FirstOrDefault(c => c.CityId == id)?.TxtTitle ?? "" : "";
+
+    var isSale = dealType == "sale" || string.IsNullOrEmpty(dealType);
+    var isRent = dealType == "rent";
+    var bgClass = isSale ? "bg-sale" : isRent ? "bg-rent" : "";
+    var shadowClass = isSale ? "shadow-sale" : isRent ? "shadow-rent" : "";
+    var textClass = isSale ? "text-sale" : isRent ? "text-rent" : "";
+}
+
+<nav aria-label="breadcrumb" class="mb-3 @shadowClass @(isRent ? "rent-mode" : "sale-mode")">
+    <ol class="breadcrumb breadcrumb-custom">
+        <!-- 🏠 Главная -->
+        <li class="breadcrumb-item-custom">
+            <a href="@Url.Action("Index", "Home")"><i class="fas fa-home breadcrumb-icon"></i>Объект</a>
+        </li>
+        <!-- Сделка -->
+        <li class="breadcrumb-item-custom">
+            <a href="@Url.Action("Index", "Home", new {
+                dealType,
+                categoryId,
+                subCategoryId,
+                countryId,
+                regionId,
+                cityId,
+                street
+            })">
+                <i class="fas @(dealType == "rent" ? "fa-hand-holding-usd" : "fa-tag") breadcrumb-icon"></i>
+                @(dealType == "rent" ? "Аренда" : "Продажа")
+            </a>
+        </li>
+        @* Остальные хлебные крошки без изменений, но без класса @textClass *@
+        @if (categoryId.HasValue)
+        {
+            <li class="breadcrumb-item-custom">
+                <a href="@Url.Action("Index", "Home", new {
+                    dealType,
+                    categoryId,
+                    subCategoryId,
+                    countryId,
+                    regionId,
+                    cityId,
+                    street
+                })">@GetCategoryName(categoryId)</a>
+            </li>
+        }
+        @if (subCategoryId.HasValue)
+        {
+            <li class="breadcrumb-item-custom">
+                <a href="@Url.Action("Index", "Home", new {
+                    dealType,
+                    categoryId,
+                    subCategoryId,
+                    countryId,
+                    regionId,
+                    cityId,
+                    street
+                })">@GetSubCategoryName(subCategoryId)</a>
+            </li>
+        }
+        @if (countryId.HasValue)
+        {
+            <li class="breadcrumb-item-custom">
+                <a href="@Url.Action("Index", "Home", new {
+                    dealType,
+                    categoryId,
+                    subCategoryId,
+                    countryId,
+                    regionId,
+                    cityId,
+                    street
+                })"><i class="fas fa-globe-europe breadcrumb-icon"></i>@GetCountryName(countryId)</a>
+            </li>
+        }
+        <!-- Регион -->
+        @if (regionId.HasValue)
+        {
+            <li class="breadcrumb-item-custom">
+                <a href="@Url.Action("Index", "Home", new {
+                    dealType,
+                    categoryId,
+                    subCategoryId,
+                    countryId,
+                    regionId,
+                    cityId,
+                    street
+                })">
+                    <i class="fas fa-map-marked-alt breadcrumb-icon"></i>@GetRegionName(regionId)
+                </a>
+            </li>
+        }
+        <!-- Город -->
+        @if (cityId.HasValue)
+        {
+            <li class="breadcrumb-item-custom">
+                <a href="@Url.Action("Index", "Home", new {
+                    dealType,
+                    categoryId,
+                    subCategoryId,
+                    countryId,
+                    regionId,
+                    cityId,
+                    street
+                })">
+                    <i class="fas fa-city breadcrumb-icon"></i>@GetCityName(cityId)
+                </a>
+            </li>
+        }
+        <!-- Улица -->
+        @if (!string.IsNullOrWhiteSpace(street))
+        {
+            <li class="breadcrumb-item-custom active" aria-current="page">
+                <i class="fas fa-road breadcrumb-icon"></i>@street
+            </li>
+        }
+    </ol>
+</nav>

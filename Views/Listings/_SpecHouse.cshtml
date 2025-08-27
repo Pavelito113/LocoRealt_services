@@ -1,0 +1,42 @@
+﻿@model LocoRealt.Models.SpecHouse
+
+<table class="table table-sm table-bordered">
+    <tbody>
+        <tr>
+            <th>Площадь дома</th>
+            <td>@(Model.HouseArea?.ToString("0.##") ?? "-") м²</td>
+        </tr>
+        <tr>
+            <th>Площадь участка</th>
+            <td>@(Model.LandArea?.ToString("0.##") ?? "-") сот.</td>
+        </tr>
+        <tr>
+            <th>Этажей</th>
+            <td>@(Model.FloorCount?.ToString() ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Материал стен</th>
+            <td>@(Model.WallMaterial ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Статус</th>
+            <td>@(Model.LegalStatus ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Состояние</th>
+            <td>@(Model.Condition ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Отопление</th>
+            <td>@(Model.Heating ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Водоснабжение</th>
+            <td>@(Model.WaterSupply ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Канализация</th>
+            <td>@(Model.Sewerage ?? "-")</td>
+        </tr>
+    </tbody>
+</table>

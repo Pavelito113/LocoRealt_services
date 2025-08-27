@@ -1,0 +1,77 @@
+﻿@model ListingsViewModel
+@{
+    ViewData["Title"] = "Недвижимость - Продажа и аренда";
+    Layout = "_Layout";
+}
+
+<partial name="_Breadcrumbs" model="Model.BreadcrumbTrail" />
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filters sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="sticky-top" style="top: 80px;">
+                <partial name="_Filters" model="Model" />
+
+                <!-- Убедитесь, что CategoriesVm не null -->
+                @if (Model.CategoriesVm != null)
+                {
+                    <partial name="_Categories" model="Model.CategoriesVm" />
+                }
+
+                <!-- Убедитесь, что GeoVm не null -->
+                @if (Model.GeoVm != null)
+                {
+                    <partial name="_GeoFilters" model="Model.GeoVm" />
+                }
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-lg-9 col-md-8">
+            <partial name="_FilterSummary" model="Model" />
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <span class="text-muted">Найдено: @Model.Pagination?.TotalItems объявлений</span>
+                </div>
+                <div class="col-md-6 text-end">
+                    <select class="form-select form-select-sm d-inline-block w-auto"
+                            id="sortSelect" onchange="updateSorting(this.value)">
+                        <option value="date_desc">Сначала новые</option>
+                        <option value="date_asc">Сначала старые</option>
+                        <option value="price_asc">Цена по возрастанию</option>
+                        <option value="price_desc">Цена по убыванию</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (Model.Listings != null && Model.Listings.Any())
+            {
+                <partial name="_ListingGrid" model="Model.Listings" />
+            }
+            else
+            {
+                <div class="alert alert-info">Объявления не найдены</div>
+            }
+
+            @if (Model.Pagination?.TotalPages > 1)
+            {
+                <partial name="_Pagination" model="Model.Pagination" />
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateSorting(orderBy) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('orderBy', orderBy);
+            window.location.href = url.toString();
+        }
+
+        // Initialize select value
+        document.getElementById('sortSelect').value = '@Model.OrderBy' || 'date_desc';
+    </script>
+}

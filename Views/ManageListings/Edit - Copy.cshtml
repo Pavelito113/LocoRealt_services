@@ -1,0 +1,104 @@
+﻿@model LocoRealt.Models.CreateListingViewModel
+@{
+    ViewData["Title"] = "Редактирование объявления";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="ListingId" />
+
+    <!-- Заголовок -->
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <!-- Описание -->
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Цена -->
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <!-- Тип сделки -->
+    <div class="mb-3">
+        <label asp-for="DealType" class="form-label">Тип сделки</label>
+        <select asp-for="DealType" class="form-select">
+            <option value="Продажа">Продажа</option>
+            <option value="Аренда">Аренда</option>
+        </select>
+    </div>
+
+    <!-- Категория -->
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Категория</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "TxtTitle", Model.CategoryId))"></select>
+    </div>
+
+    <!-- Подкатегория -->
+    <div class="mb-3">
+        <label asp-for="SubCategoryId" class="form-label">Подкатегория</label>
+        <select asp-for="SubCategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.SubCategories, "SubCategoryId", "TxtTitle", Model.SubCategoryId))"></select>
+    </div>
+
+    <!-- Специфические характеристики -->
+    <div id="special-fields">
+        @if (Model.CategoryId == 1)
+        {
+            <!-- Квартира -->
+            <partial name="_EditFlat" model="Model" />
+        }
+        else if (Model.CategoryId == 2)
+        {
+
+            <!-- Дом -->
+            <partial name="_EditHouse" model="Model" />
+        }
+        else if (Model.CategoryId == 3)
+        {
+
+            <!-- Коммерция -->
+            <partial name="_EditCommercial" model="Model" />
+        }
+        else if (Model.CategoryId == 4)
+        {
+
+            <!-- Земля -->
+            <partial name="_EditLandPlot" model="Model" />
+        }
+    </div>
+
+    <!-- Изображения -->
+    <div class="mb-3">
+        <label class="form-label">Фотографии</label>
+        <input type="file" name="Images" multiple class="form-control" />
+        @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+        {
+            <div class="mt-2">
+                @foreach (var img in Model.ExistingImages)
+                {
+                    <img src="@img.TxtImageUrl" alt="Фото" style="max-width: 150px; margin: 5px;" />
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Кнопки -->
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-save"></i> Сохранить
+    </button>
+    <a asp-action="Details" asp-route-id="@Model.ListingId" class="btn btn-secondary">Отмена</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

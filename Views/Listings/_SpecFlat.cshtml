@@ -1,0 +1,68 @@
+﻿@model LocoRealt.Models.SpecFlat
+
+<table class="table table-sm table-bordered">
+    <tbody>
+        <tr>
+            <th>Комнат</th>
+            <td>
+                @if (Model.IsRoom == true)
+                {
+                    @:Комната
+                }
+                else if (Model.IsStudio == true)
+                {
+                    @:Студия
+                }
+                else
+                {
+                    @Model.Rooms
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>Общая площадь</th>
+            <td>@(Model.TotalArea?.ToString("0.##") ?? "-") м²</td>
+        </tr>
+        <tr>
+            <th>Жилая площадь</th>
+            <td>@(Model.LivingArea?.ToString("0.##") ?? "-") м²</td>
+        </tr>
+        <tr>
+            <th>Кухня</th>
+            <td>@(Model.KitchenArea?.ToString("0.##") ?? "-") м²</td>
+        </tr>
+        <tr>
+            <th>Этаж</th>
+            <td>
+                @if (Model.FloorNum.HasValue && Model.TotalFloors.HasValue)
+                {
+                    @($"{Model.FloorNum} / {Model.TotalFloors}")
+                }
+                else
+                {
+                    @:"-"
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>Балкон</th>
+            <td>@(Model.Balcony ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Санузел</th>
+            <td>@(Model.BathroomType ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Вид из окон</th>
+            <td>@(Model.WindowView ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Отопление</th>
+            <td>@(Model.HeatingType ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Ремонт</th>
+            <td>@(Model.RepairState ?? "-")</td>
+        </tr>
+    </tbody>
+</table>

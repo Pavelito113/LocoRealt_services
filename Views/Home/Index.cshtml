@@ -1,0 +1,356 @@
+﻿@model ListingsViewModel
+
+@{
+    ViewData["Title"] = "Недвижимость - Продажа и аренда";
+    Layout = "_Layout";
+    var isMainContentPage = true;
+    var dealType = Context.Request.Query["dealType"].ToString().ToLower();
+    var isSale = dealType == "sale" || string.IsNullOrEmpty(dealType);
+    var isRent = dealType == "rent";
+    var bgClass = isSale ? "bg-sale" : isRent ? "bg-rent" : "";
+    var shadowClass = isSale ? "shadow-sale" : isRent ? "shadow-rent" : "";
+    var textClass = isSale ? "text-sale" : isRent ? "text-rent" : "";
+}
+
+<partial name="_Breadcrumbs" model="Model.BreadcrumbTrail" />
+
+<div class="container-fluid mb-4 @bgClass @shadowClass p-2 rounded-3 border">
+    <div class="row g-3">
+
+        <!-- 🔹 Хлебные крошки -->
+        <div class="col-12">
+            @await Html.PartialAsync("_FilterSummary")
+        </div>
+
+        <!-- Левая колонка: только категории -->
+        <aside class="col-lg-3 col-md-4">
+            <div class="sticky-top" style="top: 20px;">
+                @if (Model.CategoriesVm != null)
+                {
+                    <div class="mb-4">
+                        <partial name="_Categories" model="Model.CategoriesVm" />
+                    </div>
+                }
+            </div>
+        </aside>
+
+        <!-- Центральная колонка: основной контент -->
+        <main class="col-lg-6 col-md-8">
+            <!-- 🔹 Фильтры -->
+            <div class="mb-3 @bgClass">
+                <partial name="_Filters" model="Model" />
+            </div>
+
+            <!-- 🔹 Гео-фильтры -->
+            @if (Model.GeoVm != null)
+            {
+                <div class="mb-3">
+                    <partial name="_GeoFilters" model="Model.GeoVm" />
+                </div>
+            }
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <span class="text-muted">
+                        Найдено: @(Model.Pagination?.TotalItems ?? 0) объявлений
+                    </span>
+                </div>
+                <div>
+                    <select class="form-select form-select-sm d-inline-block w-auto"
+                            id="sortSelect" onchange="updateSorting(this.value)">
+                        <option value="date_desc">Сначала новые</option>
+                        <option value="date_asc">Сначала старые</option>
+                        <option value="price_asc">Цена по возрастанию</option>
+                        <option value="price_desc">Цена по убыванию</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 🔹 Результаты -->
+            @if (Model.Listings != null && Model.Listings.Any())
+            {
+                <partial name="_ListingGrid" model="Model.Listings" />
+            }
+            else
+            {
+                <div class="astro-warning-empty">
+                    <span class="astro-warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
+                    <span class="astro-warning-text">Объявления не найдены по заданным параметрам.</span>
+                </div>
+            }
+
+            <!-- 🔹 Пагинация -->
+            @if ((Model.Pagination?.TotalPages ?? 0) > 1)
+            {
+                <partial name="_Pagination" model="Model.Pagination" />
+            }
+        </main>
+
+        <!-- Правая колонка: баннеры -->
+        @if (isMainContentPage)
+        {
+            <aside class="col-lg-3 d-none d-lg-block">
+                <div class="sticky-top" style="top: 20px;">
+                    <partial name="_Banners" />
+                </div>
+            </aside>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateSorting(orderBy) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('orderBy', orderBy);
+            window.location.href = url.toString();
+        }
+
+        const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
+            sortSelect.value = '@(Model.OrderBy ?? "date_desc")';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('filterForm');
+            const countrySelect = document.getElementById('countrySelect');
+            const regionSelect = document.getElementById('regionSelect');
+            const citySelect = document.getElementById('citySelect');
+            const resetFilterBtn = document.getElementById('resetFilterBtn');
+            const resetGeoBtn = document.getElementById('resetGeoBtn');
+            const streetInput = document.querySelector('input[name="street"]');
+            const categorySelect = document.getElementById('categorySelect');
+            const subCategorySelect = document.getElementById('subCategorySelect');
+
+            if (!form || !countrySelect || !regionSelect || !citySelect) return;
+
+            function clearSelect(select, placeholder = 'Выбрать ...') {
+                select.innerHTML = `<option value="">${placeholder}</option>`;
+            }
+
+            function disableSelect(select, message) {
+                select.disabled = true;
+                clearSelect(select, message);
+            }
+
+            function enableSelect(select) {
+                select.disabled = false;
+            }
+
+            function showLoading(select) {
+                select.innerHTML = `<option disabled selected>Загрузка...</option>`;
+            }
+
+            function fillSelect(select, items, selectedId = null) {
+                clearSelect(select);
+                for (const item of items) {
+                    const option = document.createElement('option');
+                    option.value = item.value || item.Id || item.id;
+                    option.textContent = item.text || item.Title || item.title;
+                    if (selectedId && String(option.value) === String(selectedId)) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                }
+            }
+
+            function getFilters() {
+                return {
+                    CountryId: countrySelect.value || null,
+                    RegionId: regionSelect.value || null,
+                    CityId: citySelect.value || null,
+                    CategoryId: categorySelect?.value || null,
+                    SubCategoryId: subCategorySelect?.value || null,
+                    DealType: document.querySelector('input[name="dealType"]')?.value || 'sale',
+                    Street: streetInput?.value?.trim() || null,
+                    MinPrice: form.querySelector('input[name="minPrice"]')?.value || null,
+                    MaxPrice: form.querySelector('input[name="maxPrice"]')?.value || null,
+                    OrderBy: form.querySelector('select[name="orderBy"]')?.value || null
+                };
+            }
+
+            function updateURL(filters) {
+                const params = new URLSearchParams();
+                for (const [key, val] of Object.entries(filters)) {
+                    if (val) params.append(key, val);
+                }
+                history.replaceState(null, '', '?' + params.toString());
+            }
+
+            async function updateFilterSummary() {
+                try {
+                    const filters = getFilters();
+                    const query = new URLSearchParams(filters).toString();
+                    const response = await fetch(`/Home/FilterSummary?${query}`);
+                    if (!response.ok) return;
+                    const html = await response.text();
+                    document.querySelector('.filter-summary').innerHTML = html;
+                } catch (err) {
+                    console.warn('Ошибка фильтрации:', err);
+                }
+            }
+
+            async function loadRegions(countryId, selectedRegionId = null) {
+                if (!countryId) return disableSelect(regionSelect, 'Сначала выберите страну');
+                showLoading(regionSelect);
+                try {
+                    const query = new URLSearchParams({ countryId }).toString();
+                    const res = await fetch(`/Home/GetRegions?${query}`);
+                    if (!res.ok) throw new Error();
+                    const data = await res.json();
+                    enableSelect(regionSelect);
+                    fillSelect(regionSelect, data, selectedRegionId);
+                } catch {
+                    disableSelect(regionSelect, 'Ошибка загрузки');
+                }
+            }
+
+            async function loadCities(regionId, selectedCityId = null) {
+                if (!regionId) return disableSelect(citySelect, 'Сначала выберите регион');
+                showLoading(citySelect);
+                try {
+                    const query = new URLSearchParams({ regionId }).toString();
+                    const res = await fetch(`/Home/GetCities?${query}`);
+                    if (!res.ok) throw new Error();
+                    const data = await res.json();
+                    enableSelect(citySelect);
+                    fillSelect(citySelect, data, selectedCityId);
+                } catch {
+                    disableSelect(citySelect, 'Ошибка загрузки');
+                }
+            }
+
+            function debounce(func, delay) {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            async function handleUpdate(skipGeo = false) {
+                const filters = getFilters();
+                updateURL(filters);
+                if (!skipGeo) {
+                    if (filters.CountryId) {
+                        await loadRegions(filters.CountryId, filters.RegionId);
+                        if (filters.RegionId) {
+                            await loadCities(filters.RegionId, filters.CityId);
+                        }
+                    }
+                }
+                updateFilterSummary();
+            }
+
+            // 🎯 Слушатели:
+            countrySelect.addEventListener('change', () => {
+                regionSelect.value = '';
+                citySelect.value = '';
+                loadRegions(countrySelect.value);
+            });
+
+            regionSelect.addEventListener('change', () => {
+                citySelect.value = '';
+                loadCities(regionSelect.value);
+            });
+
+            citySelect.addEventListener('change', () => handleUpdate(true));
+            categorySelect?.addEventListener('change', () => handleUpdate(true));
+            subCategorySelect?.addEventListener('change', () => handleUpdate(true));
+            streetInput?.addEventListener('input', debounce(() => handleUpdate(true), 500));
+
+            resetFilterBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                form.reset();
+                regionSelect.value = '';
+                citySelect.value = '';
+                disableSelect(regionSelect, 'Сначала выберите страну');
+                disableSelect(citySelect, 'Сначала выберите регион');
+                clearSelect(regionSelect, 'Сначала выберите страну');
+                clearSelect(citySelect, 'Сначала выберите регион');
+                updateURL({});
+                handleUpdate(false);
+            });
+
+            resetGeoBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                regionSelect.value = '';
+                citySelect.value = '';
+                enableSelect(regionSelect);
+                disableSelect(citySelect, 'Сначала выберите регион');
+                clearSelect(regionSelect, 'Регион');
+                clearSelect(citySelect, 'Сначала выберите регион');
+                regionSelect.focus();
+                handleUpdate(true);
+            });
+
+            // ⏳ Инициализация:
+            (async function init() {
+                const params = new URLSearchParams(location.search);
+                if (params.has('CountryId')) countrySelect.value = params.get('CountryId');
+                if (params.has('RegionId')) regionSelect.value = params.get('RegionId');
+                if (params.has('CityId')) citySelect.value = params.get('CityId');
+                if (params.has('CategoryId')) categorySelect.value = params.get('CategoryId');
+                if (params.has('SubCategoryId')) subCategorySelect.value = params.get('SubCategoryId');
+                if (params.has('Street')) streetInput.value = params.get('Street');
+                form.querySelector('input[name="minPrice"]').value = params.get('minPrice') || '';
+                form.querySelector('input[name="maxPrice"]').value = params.get('maxPrice') || '';
+                form.querySelector('select[name="orderBy"]').value = params.get('orderBy') || '';
+
+                if (countrySelect.value) {
+                    await loadRegions(countrySelect.value, regionSelect.value);
+                    if (regionSelect.value) {
+                        await loadCities(regionSelect.value, citySelect.value);
+                    }
+                }
+
+                updateFilterSummary();
+            })();
+        });
+    </script>
+
+    <style>
+        .astro-warning-empty {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 0.5rem;
+            color: #856404;
+        }
+
+        .astro-warning-icon {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .astro-warning-text {
+            font-weight: 500;
+        }
+
+        .bg-sale {
+            background-color: rgba(40, 167, 69, 0.05) !important;
+        }
+
+        .bg-rent {
+            background-color: rgba(23, 162, 184, 0.05) !important;
+        }
+
+        .shadow-sale {
+            box-shadow: 0 0.125rem 0.25rem rgba(40, 167, 69, 0.1) !important;
+        }
+
+        .shadow-rent {
+            box-shadow: 0 0.125rem 0.25rem rgba(23, 162, 184, 0.1) !important;
+        }
+
+        .text-sale {
+            color: #28a745 !important;
+        }
+
+        .text-rent {
+            color: #17a2b8 !important;
+        }
+    </style>
+}

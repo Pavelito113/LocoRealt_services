@@ -1,0 +1,67 @@
+﻿@model LocoRealt.Models.CreateListingViewModel
+@{
+    ViewData["Title"] = "Добавить объявление";
+}
+
+<h2>Добавить объявление</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <!-- Общие поля -->
+    <input asp-for="Title" class="form-control" placeholder="Заголовок" />
+    <textarea asp-for="Description" class="form-control" placeholder="Описание"></textarea>
+    <input asp-for="Price" type="number" class="form-control" placeholder="Цена" />
+    <select asp-for="DealType" class="form-control">
+        <option value="Продажа">Продажа</option>
+        <option value="Аренда">Аренда</option>
+    </select>
+
+    <!-- Выбор категории -->
+    <select asp-for="CategoryId" class="form-control" id="categorySelect">
+        <option value="">-- Категория --</option>
+        @foreach (var c in ViewBag.Categories)
+        {
+            <option value="@c.CategoryId">@c.TxtTitle</option>
+        }
+    </select>
+
+    <!-- Характеристики для квартиры -->
+    <div id="flatFields" style="display:none;">
+        <input asp-for="Rooms" class="form-control" placeholder="Количество комнат" />
+        <input asp-for="TotalArea" class="form-control" placeholder="Общая площадь" />
+        <!-- остальные поля SpecFlat -->
+    </div>
+
+    <!-- Характеристики для дома -->
+    <div id="houseFields" style="display:none;">
+        <input asp-for="FloorCount" class="form-control" placeholder="Этажей" />
+        <!-- остальные поля SpecHouse -->
+    </div>
+
+    <!-- Характеристики для коммерции -->
+    <div id="commercialFields" style="display:none;">
+        <input asp-for="Purpose" class="form-control" placeholder="Назначение" />
+        <!-- остальные поля SpecCommercial -->
+    </div>
+
+    <!-- Характеристики для земельных участков -->
+    <div id="landFields" style="display:none;">
+        <input asp-for="HasGas" type="checkbox" /> Газ
+        <!-- остальные поля SpecLandPlot -->
+    </div>
+
+    <input asp-for="Images" type="file" multiple class="form-control" />
+
+    <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById("categorySelect").addEventListener("change", function () {
+            var cat = this.value;
+            document.getElementById("flatFields").style.display = (cat == "1") ? "block" : "none";
+            document.getElementById("houseFields").style.display = (cat == "2") ? "block" : "none";
+            document.getElementById("commercialFields").style.display = (cat == "3") ? "block" : "none";
+            document.getElementById("landFields").style.display = (cat == "4") ? "block" : "none";
+        });
+    </script>
+}

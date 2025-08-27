@@ -1,0 +1,72 @@
+﻿@model LocoRealt.Models.ListingsViewModel
+@{
+    ViewData["Title"] = "Поиск недвижимости";
+
+    var dealType = Context.Request.Query["dealType"].ToString().ToLower();
+    var isSale = dealType == "sale" || string.IsNullOrEmpty(dealType);
+    var isRent = dealType == "rent";
+
+    var bgClass = isSale ? "bg-sale" : isRent ? "bg-rent" : "";
+    var shadowClass = isSale ? "shadow-sale" : isRent ? "shadow-rent" : "";
+    var textClass = isSale ? "text-sale" : isRent ? "text-rent" : "";
+}
+
+<div class="row">
+    <!-- Левая колонка страницы: категории -->
+    <div class="col-lg-3">
+        <div id="categories-wrapper" class="p-2 border rounded @bgClass @shadowClass">
+            @await Html.PartialAsync("_Categories", Model)
+        </div>
+    </div>
+
+    <!-- Центральная колонка страницы: фильтры и результаты -->
+    <div class="col-lg-6">
+        <!-- Хлебные крошки -->
+        @await Html.PartialAsync("_FilterSummary", Model)
+
+        <!-- Фильтры -->
+        <div class="mb-3 p-2 border rounded @bgClass">
+            @await Html.PartialAsync("_Filters", Model)
+        </div>
+
+        <!-- Результаты -->
+        <div class="search-results">
+            @if (Model.Listings == null || !Model.Listings.Any())
+            {
+                <div class="astro-warning-empty">
+                    <span class="astro-warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
+                    <span class="astro-warning-text">Объявления не найдены по заданным параметрам.</span>
+                </div>
+            }
+            else
+            {
+                <!-- Здесь будет вывод объявлений -->
+                @await Html.PartialAsync("_Pagination", Model.Pagination)
+            }
+        </div>
+    </div>
+
+    <!-- Правая колонка страницы: оставляем пустой или под виджеты -->
+ 
+</div>
+
+@section Scripts {
+    <script>
+        function loadCategoriesWithFilters(filters) {
+            $.ajax({
+                url: '/Categories/LoadCategories',
+                type: 'GET',
+                data: filters,
+                success: function (html) {
+                    $('#categories-wrapper').html(html);
+                },
+                error: function () {
+                    alert('Ошибка при загрузке категорий');
+                }
+            });
+        }
+
+        // Пример вызова:
+        // loadCategoriesWithFilters({ countryId: 1, dealType: 'sale' });
+    </script>
+}

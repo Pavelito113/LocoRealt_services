@@ -1,0 +1,268 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using LocoRealt.Models
+@model LocoRealt.Models.ListingDetailsViewModel
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = Model.Listing.TxtTitle ?? "Объявление";
+    var dealType = Model.DealType;
+}
+
+<!-- Хлебные крошки -->
+@if (Model.BreadcrumbTrail != null)
+{
+    @await Html.PartialAsync("_Breadcrumbs", Model.BreadcrumbTrail)
+}
+
+<!-- Категории (опционально, боковая панель или сверху) -->
+@if (Model.CategoriesVm != null)
+{
+    @await Html.PartialAsync("_Categories", Model.CategoriesVm)
+}
+
+<!-- Геофильтры (если нужны на странице деталей) -->
+@if (Model.GeoVm != null)
+{
+    @await Html.PartialAsync("_GeoFilters", Model.GeoVm)
+}
+
+<a class="btn btn-outline-secondary" href="@(Model.ReturnUrl ?? Url.Action("Index", "Home"))">← Назад к списку</a>
+<div class="row mt-3">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h1 class="card-title">@Model.Listing.TxtTitle</h1>
+
+                @if (!string.IsNullOrEmpty(Model.Listing.MemDescription))
+                {
+                    <div class="mb-4">
+                        <h4>Описание</h4>
+                        <p class="text-justify">@Model.Listing.MemDescription</p>
+                    </div>
+                }
+
+                @if (Model.ListingImages.Any())
+                {
+                    <div class="mb-4">
+                        <h4>Фотографии (@Model.ListingImages.Count)</h4>
+                        <div class="row g-2" id="gallery">
+                            @for (int i = 0; i < Model.ListingImages.Count; i++)
+                            {
+                                var img = Model.ListingImages[i];
+                                var fileName = img.TxtImageUrl ?? img.TxtImage ?? "";
+                                var imageUrl = fileName.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                                ? fileName
+                                : $"/images/listings/{fileName}";
+
+                                <div class="col-md-4 col-6">
+                                    <img src="@imageUrl"
+                                         class="img-fluid rounded shadow-sm gallery-img"
+                                         data-index="@i"
+                                         alt="Фото объекта"
+                                         loading="lazy"
+                                         onerror="this.onerror=null;this.src='/images/no-image.png'"
+                                         style="height: 180px; width: 100%; object-fit: cover; cursor: pointer;">
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Основные характеристики -->
+                <div class="mb-4">
+                    <h4>Основные характеристики</h4>
+                    <div class="row">
+                        @if (Model.Listing.Rooms.HasValue)
+                        {
+                            <div class="col-md-6 mb-2"><strong>Количество комнат:</strong> @Model.Listing.Rooms</div>
+                        }
+                        @if (Model.Listing.Floor.HasValue)
+                        {
+                            <div class="col-md-6 mb-2"><strong>Этаж:</strong> @Model.Listing.Floor</div>
+                        }
+                        @if (Model.Listing.TotalArea.HasValue)
+                        {
+                            <div class="col-md-6 mb-2"><strong>Общая площадь:</strong> @Model.Listing.TotalArea?.ToString("0.##") м²</div>
+                        }
+                        @if (Model.Listing.LandArea.HasValue)
+                        {
+                            <div class="col-md-6 mb-2"><strong>Площадь участка:</strong> @Model.Listing.LandArea?.ToString("0.##") м²</div>
+                        }
+                        @if (Model.Listing.HasGasHeating)
+                        {
+                            <div class="col-md-6 mb-2"><strong>Газовое отопление:</strong> Да</div>
+                        }
+                        @if (Model.Listing.HasCentralHeating)
+                        {
+                            <div class="col-md-6 mb-2"><strong>Центральное отопление:</strong> Да</div>
+                        }
+                    </div>
+                </div>
+
+                @if (Model.SpecialCharacteristics.Any())
+                {
+                    <div class="mb-4">
+                        <h4>Дополнительные характеристики</h4>
+                        <div class="row">
+                            @foreach (var pair in Model.SpecialCharacteristics)
+                            {
+                                <div class="col-md-6 mb-2"><strong>@pair.Key:</strong> @pair.Value</div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.ListingGeo != null)
+                {
+                    <div class="location-info">
+                        @if (!string.IsNullOrEmpty(Model.ListingGeo.TxtAddress))
+                        {
+                            <p class="mb-1"><strong>Адрес:</strong> @Model.ListingGeo.TxtAddress</p>
+                        }
+                        @if (Model.ListingGeo.City != null)
+                        {
+                            <p class="mb-1"><strong>Город:</strong> @Model.ListingGeo.City.TxtTitle</p>
+                        }
+                        @if (Model.ListingGeo.Region != null)
+                        {
+                            <p class="mb-1"><strong>Регион:</strong> @Model.ListingGeo.Region.TxtTitle</p>
+                        }
+                        @if (Model.ListingGeo.Country != null)
+                        {
+                            <p class="mb-1"><strong>Страна:</strong> @Model.ListingGeo.Country.TxtTitle</p>
+                        }
+                        @if (Model.ListingGeo.DblLatitude.HasValue && Model.ListingGeo.DblLongitude.HasValue)
+                        {
+                            <p class="mb-1"><strong>Координаты:</strong> @Model.ListingGeo.DblLatitude.Value.ToString("0.######"), @Model.ListingGeo.DblLongitude.Value.ToString("0.######")</p>
+                        }
+                        @if (Model.ListingGeo.IntGoogleMap)
+                        {
+                            <div class="alert alert-info mt-2">
+                                <i class="bi bi-info-circle"></i> Объект отображается на Google Maps
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Информация о местоположении отсутствует</div>
+                }
+            </div>
+        </div>
+
+        <!-- Пагинация объявлений -->
+        <div class="d-flex justify-content-between my-3">
+            @if (Model.PrevListingId > 0)
+            {
+                <a class="btn btn-light"
+                   asp-action="Details"
+                   asp-route-id="@Model.PrevListingId"
+                   asp-route-returnUrl="@Model.ReturnUrl"
+                   asp-route-ids="@Context.Request.Query["ids"].ToString()">
+                    ← Предыдущее
+                </a>
+            }
+            else
+            {
+                <div></div>
+            }
+
+            @if (Model.NextListingId > 0)
+            {
+                <a class="btn btn-light ms-auto"
+                   asp-action="Details"
+                   asp-route-id="@Model.NextListingId"
+                   asp-route-returnUrl="@Model.ReturnUrl"
+                   asp-route-ids="@Context.Request.Query["ids"].ToString()">
+                    Следующее →
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white"><h5 class="mb-0">Стоимость</h5></div>
+            <div class="card-body">
+                <h3 class="text-primary">@Model.Listing.DblPrice.ToString("N0") ₽</h3>
+                @if (Model.Listing.IsForSale)
+                {
+                    <span class="badge bg-success">Продажа</span>
+                }
+                @if (Model.Listing.IsForRent)
+                {
+                    <span class="badge bg-info">Аренда</span>
+                }
+                @if (Model.Listing.IsBargain)
+                {
+                    <span class="badge bg-warning">Торг</span>
+                }
+                @if (Model.Listing.DtExpiry.HasValue)
+                {
+                    <div class="mt-2">
+                        <small class="text-muted">Актуально до: @Model.Listing.DtExpiry.Value.ToShortDateString()</small>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Информация</h5></div>
+            <div class="card-body">
+                <p><strong>Тип:</strong> @Model.ListingType.TxtTitle</p>
+                <p><strong>Категория:</strong> @(Model.Category?.TxtTitle ?? "Без категории")</p>
+                  @if (!string.IsNullOrEmpty(Model.SubCategory?.TxtTitle))
+                {
+                    <p><strong>Подкатегория:</strong> @Model.SubCategory.TxtTitle</p>
+                }
+                <p><strong>Статус:</strong> @(Model.ListingStatus?.TxtTitle ?? "не указан")</p>
+                <p><strong>Дата добавления:</strong> @Model.Listing.DtCreated.ToShortDateString()</p>
+            </div>
+        </div>
+
+        <a asp-action="Edit" asp-route-id="@Model.Listing.ListingId" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Редактировать
+        </a>
+    </div>
+</div>
+
+<!-- Скрипт для галереи -->
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const images = Array.from(document.querySelectorAll('.gallery-img'));
+            const modalElement = document.getElementById('photoModal');
+            const modalImage = document.getElementById('modalImage');
+            const modal = new bootstrap.Modal(modalElement);
+            let currentIndex = 0;
+
+            function showImage(index) {
+                if (index < 0 || index >= images.length) return;
+                const src = images[index].getAttribute('src');
+                modalImage.src = src;
+                currentIndex = index;
+                modal.show();
+            }
+
+            images.forEach((img, i) => {
+                img.addEventListener('click', () => showImage(i));
+            });
+
+            document.getElementById('prevImage').addEventListener('click', () => {
+                showImage(currentIndex - 1);
+            });
+
+            document.getElementById('nextImage').addEventListener('click', () => {
+                showImage(currentIndex + 1);
+            });
+
+            modalElement.addEventListener('hidden.bs.modal', () => {
+                modalImage.src = '';
+                // Удаление лишних backdrop (на случай багов в Bootstrap)
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+            });
+        });
+    </script>
+}

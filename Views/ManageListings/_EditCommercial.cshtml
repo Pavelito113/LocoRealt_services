@@ -1,0 +1,36 @@
+﻿@model LocoRealt.Models.CreateListingViewModel
+
+<div class="card mb-4">
+    <div class="card-header">Характеристики коммерческой недвижимости</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Purpose" class="form-label">Назначение</label>
+                    <select asp-for="Purpose" class="form-select">
+                        <option value="Офис">Офис</option>
+                        <option value="Магазин">Магазин</option>
+                        <option value="Склад">Склад</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TotalArea" class="form-label">Площадь (м²)</label>
+                    <input asp-for="TotalArea" class="form-control" type="number" step="0.1" />
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="FloorNum" class="form-label">Этаж</label>
+                    <input asp-for="FloorNum" class="form-control" type="number" />
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="HasHeating" class="form-check-input" />
+                    <label asp-for="HasHeating" class="form-check-label">Отопление</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

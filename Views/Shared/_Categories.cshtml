@@ -1,0 +1,81 @@
+﻿@model LocoRealt.Models.CategoryListViewModel
+
+<div class="categories @(Model.IsRentMode ? "rent-mode" : "sale-mode") card p-3">
+    <h5 class="mt-2 mb-3 px-3 py-2 fw-semibold @(Model.IsSale ? "text-sale border-sale" : "text-rent border-rent")">
+        <i class="fas fa-layer-group me-2 @(Model.IsSale ? "fa-sale" : "fa-rent")"></i>
+        Категории
+    </h5>
+
+    <div class="accordion" id="categoriesAccordion">
+        <!-- Все категории -->
+        <div class="accordion-item mb-2">
+            <h2 class="accordion-header">
+                <a class="list-group-item d-flex align-items-center @(Model.CurrentCategoryId == 0 ? "active" : "")"
+                   href="@Url.Action("Index", "Home", new { 
+                       CategoryId = (long?)null, 
+                       SubCategoryId = (long?)null, 
+                       DealType = Model.DealType, 
+                       countryId = Model.CountryId, 
+                       page = 1 
+                   })">
+                    <i class="fas fa-times-circle me-1"></i> Все категории
+                </a>
+            </h2>
+        </div>
+
+        @foreach (var cat in Model.Categories)
+        {
+            var isActive = cat.Id == Model.CurrentCategoryId;
+            var collapseId = $"subcat-{cat.Id}";
+            var headingId = $"heading-{cat.Id}";
+            var icon = isActive ? "fa-folder-open" : "fa-folder";
+
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header" id="@headingId">
+                    <button class="accordion-button list-group-item d-flex align-items-center gap-2 px-0 @(isActive ? "active" : "collapsed")"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#@collapseId"
+                            aria-expanded="@(isActive ? "true" : "false")"
+                            aria-controls="@collapseId">
+                        <i class="fas @icon"></i>
+                        <span class="flex-grow-1 d-flex justify-content-between align-items-center">
+                            <span>@cat.Title</span>
+                            <span class="count-badge @(Model.IsRentMode ? "badge-rent rounded-pill" : "badge-sale rounded-0")">
+                                @cat.Count
+                            </span>
+                        </span>
+                    </button>
+                </h2>
+
+                <div id="@collapseId"
+                     class="accordion-collapse collapse @(isActive ? "show" : "")"
+                     aria-labelledby="@headingId"
+                     data-bs-parent="#categoriesAccordion">
+                    <ul class="list-group list-group-flush ps-3">
+                        @foreach (var sub in cat.SubCategories)
+                        {
+                            var isSubActive = sub.Id == Model.CurrentSubCategoryId;
+
+                            <li class="list-group-item @(isSubActive ? "active-sub" : "")">
+                                <a href="@Url.Action("Index", "Home", new { 
+                                    CategoryId = cat.Id, 
+                                    SubCategoryId = sub.Id, 
+                                    DealType = Model.DealType, 
+                                    countryId = Model.CountryId, 
+                                    page = 1 
+                                })"
+                                   class="d-flex justify-content-between align-items-center text-decoration-none">
+                                    <span>@sub.Title</span>
+                                    <span class="count-badge @(Model.IsRentMode ? "badge-rent rounded-pill" : "badge-sale rounded-0")">
+                                        @sub.Count
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@model BreadcrumbTrail
+@{
+    if (Model?.Items == null || !Model.Items.Any())
+    {
+        return;
+    }
+
+    var isRent = Model.Items.Any(i => i.Title == "Аренда");
+    var shadowClass = "shadow-sm";
+}
+
+<nav aria-label="breadcrumb" class="mb-3 @shadowClass @(isRent ? "rent-mode" : "sale-mode")">
+    <ol class="breadcrumb breadcrumb-custom">
+        @foreach (var item in Model.Items)
+        {
+            <li class="breadcrumb-item-custom @(item.IsActive ? "active" : "")" @(item.IsActive ? "aria-current=page" : "")>
+                @if (!string.IsNullOrEmpty(item.Url) && !item.IsActive)
+                {
+                    <a href="@item.Url">
+                        @if (!string.IsNullOrEmpty(item.IconClass))
+                        {
+                            <i class="@item.IconClass"></i>
+                        }
+                        @item.Title
+                    </a>
+                }
+                else
+                {
+                    @if (!string.IsNullOrEmpty(item.IconClass))
+                    {
+                        <i class="@item.IconClass"></i>
+                    }
+                    @item.Title
+                }
+            </li>
+        }
+    </ol>
+</nav>

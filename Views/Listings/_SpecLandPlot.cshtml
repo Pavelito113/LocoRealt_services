@@ -1,0 +1,30 @@
+﻿@model LocoRealt.Models.SpecLandPlot
+
+<table class="table table-sm table-bordered">
+    <tbody>
+        <tr>
+            <th>Назначение</th>
+            <td>@(Model.Purpose ?? "-")</td>
+        </tr>
+        <tr>
+            <th>Газ</th>
+            <td>@(Model.HasGas == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Электричество</th>
+            <td>@(Model.HasElectricity == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Скважина</th>
+            <td>@(Model.HasWaterWell == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Центральное водоснабжение</th>
+            <td>@(Model.HasCentralWater == true ? "Есть" : "Нет")</td>
+        </tr>
+        <tr>
+            <th>Септик</th>
+            <td>@(Model.HasSeptic == true ? "Есть" : "Нет")</td>
+        </tr>
+    </tbody>
+</table>

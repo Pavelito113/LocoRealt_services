@@ -1,0 +1,1120 @@
+/* ==================== */
+/* 1. BASE VARIABLES AND SETTINGS */
+/* ==================== */
+:root {
+  /* Sale theme colors */
+  --sale-bg: #f8fafc;
+  --sale-bg-hover: #e7f1ff;
+  --sale-text: #0d6efd;
+  --sale-text-hover: #0d6efd;
+  --sale-border: #b6d4fe;
+  --sale-shadow: 0 2px 12px rgba(13, 110, 253, 0.12);
+  --sale-shadow-hover: 0 4px 20px rgba(13, 110, 253, 0.18);
+
+  /* Rent theme colors */
+  --rent-bg: #f9f8fc;
+  --rent-bg-hover: #f3eaff;
+  --rent-text: #6f42c1;
+  --rent-text-hover: #6f42c1;
+  --rent-border: #d1b3ff;
+  --rent-shadow: 0 2px 12px rgba(111, 66, 193, 0.12);
+  --rent-shadow-hover: 0 4px 20px rgba(111, 66, 193, 0.18);
+}
+
+/* ==================== */
+/* 2. BASE STYLES */
+/* ==================== */
+html {
+  font-size: 10pt;
+  font-family: 'Roboto', sans-serif;
+  color: #413b3b;
+   overflow-y: scroll;
+  
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  scrollbar-gutter: stable;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    max-width: 100%;
+}
+/* ==================== */
+/* 3. THEME MODES */
+/* ==================== */
+body.sale-mode {
+  background: linear-gradient(135deg, #fdf6f9 0%, #fef9f3 60%, #fffefc 100%);
+  color: #3e3e3e;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body.sale-mode::before,
+body.sale-mode::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(32px);
+}
+
+body.sale-mode::before {
+  top: 32%;
+  left: 60%;
+  width: 340px;
+  height: 220px;
+  background: radial-gradient(circle at 60% 40%, rgba(80, 140, 255, 0.18) 0%, transparent 80%);
+  border-radius: 50% 40% 60% 50% / 60% 50% 40% 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+}
+
+body.sale-mode::after {
+  top: 70%;
+  left: 80%;
+  width: 120px;
+  height: 90px;
+  background: radial-gradient(circle at 60% 40%, rgba(156, 136, 255, 0.13) 0%, transparent 80%);
+  border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+  transform: translate(-50%, -50%) rotate(12deg);
+  filter: blur(24px);
+}
+
+body.rent-mode {
+  background: linear-gradient(135deg, #f7f8fd 0%, #f3f6ff 60%, #f9f8fc 100%);
+  color: #6f42c1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body.rent-mode::before,
+body.rent-mode::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(32px);
+}
+
+body.rent-mode::before {
+  top: 28%;
+  left: 58%;
+  width: 320px;
+  height: 200px;
+  background: radial-gradient(circle at 60% 40%, rgba(255, 180, 80, 0.11) 0%, transparent 80%);
+  border-radius: 50% 60% 40% 60% / 60% 50% 60% 40%;
+  transform: translate(-50%, -50%) rotate(-10deg);
+}
+
+body.rent-mode::after {
+  top: 68%;
+  left: 78%;
+  width: 110px;
+  height: 100px;
+  background: radial-gradient(circle at 60% 40%, rgba(255, 213, 140, 0.09) 0%, transparent 80%);
+  border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+  transform: translate(-50%, -50%) rotate(14deg);
+  filter: blur(22px);
+}
+
+/* ==================== */
+/* 4. COMPONENTS */
+/* ==================== */
+/* Accordion */
+.accordion-button,
+.btn,
+a,
+button,
+.list-group-item {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.accordion-button:not(.collapsed),
+.accordion-button:focus {
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+.accordion-button {
+  padding: 0.75rem 1rem !important;
+  align-items: center !important;
+}
+
+.accordion-body {
+  padding: 0.75rem 1rem !important;
+}
+
+/* Categories */
+.categories {
+  font-family: Arial, sans-serif;
+  border-radius: 10px;
+  padding: 0 !important;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  background-color: var(--sale-bg);
+  box-shadow: var(--sale-shadow);
+  border: none !important;
+}
+
+.categories.rent-mode {
+  background-color: var(--rent-bg);
+  box-shadow: var(--rent-shadow);
+}
+
+.categories h5 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #2d2d2d;
+}
+
+.categories .accordion-item,
+.categories .accordion-header,
+.categories .accordion-button,
+.categories .list-group-item,
+.categories .collapse,
+.categories .list-group-flush,
+.categories .ps-2 {
+  background-color: transparent !important;
+  border: none !important;
+  padding-left: 0 !important;
+  margin-top: 0 !important;
+}
+
+.categories .accordion-button {
+  font-size: 0.95rem;
+  color: #2d2d2d !important;
+  font-weight: 500;
+  border-radius: 6px !important;
+  margin-bottom: 2px;
+}
+
+.categories .accordion-button:not(.collapsed) {
+  color: var(--sale-text-hover) !important;
+  background-color: var(--sale-bg-hover) !important;
+}
+
+.categories.rent-mode .accordion-button:not(.collapsed) {
+  color: var(--rent-text-hover) !important;
+  background-color: var(--rent-bg-hover) !important;
+}
+
+.categories .list-group-item {
+  border-radius: 6px !important;
+  margin-bottom: 2px !important;
+  padding: 0.5rem 1rem !important;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.925rem;
+  background: transparent !important;
+}
+
+.categories .list-group-item:hover {
+  background-color: var(--sale-bg-hover) !important;
+  color: var(--sale-text-hover) !important;
+}
+
+.categories.rent-mode .list-group-item:hover {
+  background-color: var(--rent-bg-hover) !important;
+  color: var(--rent-text-hover) !important;
+}
+
+.categories .list-group-item.active {
+  background-color: var(--sale-bg-hover) !important;
+  color: var(--sale-text-hover) !important;
+  font-weight: 600;
+}
+
+.categories.rent-mode .list-group-item.active {
+  background-color: var(--rent-bg-hover) !important;
+  color: var(--rent-text-hover) !important;
+}
+
+.categories .list-group-item i.fa {
+  margin-right: 0.65rem;
+  font-size: 0.9rem;
+  color: inherit;
+}
+
+.categories .list-group-item a {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: space-between;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Subcategories */
+.subcategory-item {
+  padding: 0.25rem 0;
+  margin: 2px 0 !important;
+  border: none;
+  padding-left: 1.5rem !important;
+}
+
+.subcategory-link {
+  padding: 0.4rem 1rem !important;
+  border-radius: 5px !important;
+  color: #212529 !important;
+  text-decoration: none !important;
+  display: block;
+}
+
+.subcategory-link:hover,
+.subcategory-link:focus {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.subcategory-item.active-sub > .subcategory-link {
+  background-color: #d0e3ff;
+  border-left: 3px solid #0d6efd;
+  padding-left: calc(1rem - 3px);
+  color: #0d6efd !important;
+  font-weight: 600;
+}
+
+.subcategory-link:focus {
+  outline: 1.5px solid var(--sale-border) !important;
+  box-shadow: 0 0 0 2px var(--sale-bg-hover);
+  border-color: var(--sale-border) !important;
+}
+
+.categories.rent-mode .subcategory-link:focus {
+  outline: 1.5px solid var(--rent-border) !important;
+  box-shadow: 0 0 0 2px var(--rent-bg-hover);
+  border-color: var(--rent-border) !important;
+}
+
+.categories .list-group.ps-3 {
+  padding-left: 1.5rem !important;
+}
+
+
+/* Breadcrumbs */
+.breadcrumb-custom {
+  font-size: 0.92rem;
+  padding: 0.4rem 0.7rem;
+}
+
+.breadcrumb-item-custom {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  gap: 0.05em;
+}
+
+.breadcrumb-item-custom:not(:last-child)::after {
+  content: "/";
+  color: var(--rent-text);
+  margin: 0 0.7em 0 0.5em;
+  font-weight: 100;
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+.breadcrumb-item-custom i.fa,
+.breadcrumb-item-custom i.fas,
+.breadcrumb-item-custom i.far,
+.breadcrumb-item-custom i.fab {
+  margin-right: 0.35em;
+}
+
+.breadcrumb-item-custom a {
+  text-decoration: none !important;
+  color: var(--sale-text) !important;
+  transition: color 0.2s;
+}
+
+.sale-mode .breadcrumb-item-custom a {
+  color: var(--sale-text) !important;
+}
+
+.rent-mode .breadcrumb-item-custom a {
+  color: var(--rent-text) !important;
+}
+
+.breadcrumb-item-custom a:hover, 
+.breadcrumb-item-custom a:focus {
+  color: var(--sale-text-hover) !important;
+  text-decoration: none;
+}
+
+.rent-mode .breadcrumb-item-custom a:hover, 
+.rent-mode .breadcrumb-item-custom a:focus {
+  color: var(--rent-text-hover) !important;
+  text-decoration: none;
+}
+
+.sale-mode .breadcrumb-item-custom i,
+.sale-mode .breadcrumb-item-custom .breadcrumb-icon {
+  color: var(--sale-text) !important;
+}
+
+.rent-mode .breadcrumb-item-custom i,
+.rent-mode .breadcrumb-item-custom .breadcrumb-icon {
+  color: var(--rent-text) !important;
+}
+
+.sale-mode .breadcrumb-item-custom a:hover i,
+.sale-mode .breadcrumb-item-custom a:focus i {
+  color: var(--sale-text-hover) !important;
+}
+
+.rent-mode .breadcrumb-item-custom a:hover i,
+.rent-mode .breadcrumb-item-custom a:focus i {
+  color: var(--rent-text-hover) !important;
+}
+
+/* Buttons */
+.btn-toggle-group .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  padding-left: 0.8rem !important;
+  padding-right: 0.8rem !important;
+  font-size: 1rem;
+  line-height: 1.2;
+  min-height: 2.1em;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.btn-toggle-group .btn-sm {
+  font-size: 0.98rem;
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+}
+
+.btn-toggle-group .btn i {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1.1em;
+  margin-right: 0.4em;
+  margin-left: 0;
+}
+
+.btn-toggle-group .btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.45em;
+  vertical-align: middle;
+  display: inline-block;
+  transition: filter 0.2s;
+}
+
+.btn-sale svg {
+  fill: var(--sale-text-hover);
+}
+
+.btn-rent svg {
+  fill: var(--rent-text-hover);
+}
+
+.btn-toggle-group .btn-sale-active svg {
+  animation: spin-3x-slowdown 2.5s cubic-bezier(0.25,0.8,0.5,1) 1;
+}
+
+.btn-toggle-group .btn-rent-active svg {
+  animation: none;
+  filter: drop-shadow(0 0 0.2em var(--rent-text-hover));
+  position: relative;
+}
+
+.btn-toggle-group .btn-rent-active svg::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  margin-left: -0.8em;
+  margin-top: -0.8em;
+  border-radius: 50%;
+  box-shadow: 0 0 0.5em 0.1em var(--rent-text-hover);
+  pointer-events: none;
+  z-index: 1;
+  animation: spin-3x-slowdown 2.5s cubic-bezier(0.25,0.8,0.5,1) 1;
+}
+
+.btn-toggle-group .btn-rent-active .rent-horseshoe {
+  animation: spin-3x-slowdown 2.5s cubic-bezier(0.25,0.8,0.5,1) 1;
+  stroke: var(--rent-text-hover);
+}
+
+/* Form Elements */
+.sale-mode .form-control:focus,
+.sale-mode .form-select:focus {
+  outline: none !important;
+  border-color: var(--sale-border);
+  box-shadow:
+      0 0 0 2px rgba(13, 110, 253, 0.12),
+      0 0 8px 2px var(--sale-shadow-hover);
+  background-color: var(--sale-bg-hover);
+  transition: all 0.2s ease;
+}
+
+.rent-mode .form-control:focus,
+.rent-mode .form-select:focus {
+  outline: none !important;
+  border-color: var(--rent-border);
+  box-shadow:
+      0 0 0 2px rgba(111, 66, 193, 0.12),
+      0 0 8px 2px var(--rent-shadow-hover);
+  background-color: var(--rent-bg-hover);
+  transition: all 0.2s ease;
+}
+
+.form-select {
+  background-color: var(--sale-bg);
+  border-color: var(--sale-border);
+  transition: all 0.2s ease;
+}
+
+.rent-mode .form-select {
+  background-color: var(--rent-bg);
+  border-color: var(--rent-border);
+}
+
+.sale-mode .form-select:hover {
+  outline: none;
+  border-color: var(--sale-border);
+  background-color: var(--sale-bg-hover);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.12);
+}
+
+.rent-mode .form-select:hover {
+  outline: none;
+  border-color: var(--rent-border);
+  background-color: var(--rent-bg-hover);
+  box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.12);
+}
+
+.sale-mode .form-select:focus {
+  border-color: var(--sale-border);
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.12);
+  background-color: var(--sale-bg-hover);
+}
+
+.rent-mode .form-select:focus {
+  border-color: var(--rent-border);
+  box-shadow: 0 0 0 1px rgba(111, 66, 193, 0.12);
+  background-color: var(--rent-bg-hover);
+}
+
+select.form-select option:hover {
+  background-color: var(--sale-bg-hover);
+  color: var(--sale-text);
+}
+
+.rent-mode select.form-select option:hover {
+  background-color: var(--rent-bg-hover);
+  color: var(--rent-text);
+}
+
+.form-select:focus:not(.sale-mode, .form-select):not(.rent-mode, .form-select) {
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.form-select:hover:not(.sale-mode, .form-select):not(.rent-mode, .form-select) {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--sale-border);
+  background-color: var(--sale-bg);
+}
+
+/* Badges */
+.count-badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.2em 0.5em;
+  background-color: var(--sale-text);
+  color: white;
+  line-height: 1;
+  border-radius: 0.65em;
+  margin-left: 0.4em;
+  min-width: 1.4em;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-sale {
+  background-color: var(--sale-text);
+}
+
+.badge-rent {
+  background-color: var(--rent-text);
+}
+
+.badge-sale.rounded-0 {
+  border-radius: 0.25rem;
+}
+
+.badge-rent.rounded-pill {
+  border-radius: 999px;
+}
+
+/* Header */
+.main-header {
+  margin-bottom: 2.2rem !important;
+}
+.main-section {
+    padding-top: 70px;
+}
+
+/* Navbar */
+.navbar-toggler {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  transition: background 0.18s, border-color 0.18s;
+  padding: 4px 8px;
+  border-color: transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.navbar-toggler::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  z-index: 1;
+  border: 1.5px solid;
+  border-image: linear-gradient(to bottom, #b6d4fe, #6f42c1, #e7f1ff) 1;
+}
+
+.navbar-toggler:hover, 
+.navbar-toggler:focus {
+  background: rgba(180, 180, 190, 0.13);
+  box-shadow: 0 2px 8px 0 rgba(180,180,190,0.08);
+  border-color: #6f42c1;
+}
+.main-header.sticky-top {
+    z-index: 1030; /* Больше, чем у обычного контента, и такой же, как у .modal-backdrop */
+}
+/* Warning Alert */
+.astro-warning-empty {
+  background: linear-gradient(135deg, #fffbe8 60%, #fff7e0 100%);
+  color: #b97a00;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 16px 0 rgba(255, 193, 7, 0.08), 0 1.5px 6px 0 rgba(180, 150, 0, 0.06);
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.13rem;
+  font-weight: 500;
+  margin: 1.5rem 0 1.5rem 0;
+  border: 1.5px solid #ffe69c;
+  gap: 1.1rem;
+  position: relative;
+}
+
+.astro-warning-icon {
+  font-size: 2.1rem;
+  color: #ffb300;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 8px #ffe69c88);
+}
+
+.astro-warning-text {
+  flex: 1;
+  display: block;
+  line-height: 1.4;
+}
+
+/* ===========================
+   Filter Components (Stable Font Size & Weight)
+   =========================== */
+
+   .astro-filters-collapse {
+    position: relative;
+  }
+  
+  .astro-filters-collapse .astro-filters-title,
+  .astro-filters-collapse label,
+  .astro-filters-collapse .form-label {
+    font-weight: 400 !important;
+  }
+  
+  .astro-filters-collapse .fa,
+  .astro-filters-collapse .fa-solid,
+  .astro-filters-toggle .fa-sliders-h {
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free', 'FontAwesome', sans-serif !important;
+    font-style: normal !important;
+  }
+  
+  .astro-filters-collapse .fa,
+  .astro-filters-collapse .fa-solid {
+    font-weight: 400 !important;
+  }
+  
+  .astro-filters-toggle .fa-sliders-h {
+    font-size: 1.2em !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+    transition: none !important;
+  }
+  
+  /* 🔹 Toggle Button Base Style */
+  .astro-filters-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    padding: 0.55em 1.1em;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1.08rem;
+    font-weight: 500; /* стабильный вес */
+    letter-spacing: 0.01em;
+    text-align: right;
+    opacity: 0.92;
+    background: linear-gradient(90deg, var(--sale-bg) 0%, var(--sale-bg-hover) 60%, var(--rent-bg) 100%);
+    border: 0.5px solid var(--sale-border);
+    color: var(--sale-text);
+    box-shadow: 0 1px 8px 0 rgba(13, 110, 253, 0.04) inset;
+    transition: background 0.22s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+  }
+  
+  /* 🔹 Icon inside toggle */
+  .astro-filters-toggle i {
+    color: inherit !important;
+    transition: color 0.18s;
+    filter: none;
+  }
+  
+  /* 🔹 Hover/Focus */
+  .astro-filters-toggle:hover,
+  .astro-filters-toggle:focus {
+    background: linear-gradient(90deg, var(--sale-bg-hover) 0%, var(--rent-bg-hover) 100%);
+    border-color: var(--rent-border);
+    color: var(--rent-text);
+    box-shadow: 0 2px 12px 0 rgba(111, 66, 193, 0.09) inset;
+  }
+  
+  .astro-filters-toggle:hover i,
+  .astro-filters-toggle:focus i {
+    color: var(--sale-text-hover);
+  }
+  
+  /* 🔹 Expanded State */
+  .astro-filters-toggle[aria-expanded="true"] {
+    background: linear-gradient(90deg, var(--rent-bg) 0%, var(--sale-bg-hover) 100%);
+    border-color: var(--rent-border);
+    color: var(--rent-text);
+    box-shadow: 0 2px 6px 0 rgba(111, 66, 193, 0.09) inset;
+  }
+  
+  /* Без изменения font-weight */
+  .astro-filters-toggle[aria-expanded="true"] i {
+    color: var(--sale-text-hover);
+  }
+  
+  /* === Единая политика цвета текста для кнопки фильтра === */
+  .astro-filters-toggle {
+    color: var(--sale-text);
+    font-weight: 500;
+    transition: color 0.22s, background 0.22s, border-color 0.18s, box-shadow 0.18s;
+  }
+  .rent-mode .astro-filters-toggle {
+    color: var(--rent-text);
+  }
+  .astro-filters-toggle[aria-expanded="true"] {
+    color: var(--sale-text-hover);
+  }
+  .rent-mode .astro-filters-toggle[aria-expanded="true"] {
+    color: var(--rent-text-hover);
+  }
+  .astro-filters-toggle:hover,
+  .astro-filters-toggle:focus {
+    color: var(--sale-text-hover);
+  }
+  .rent-mode .astro-filters-toggle:hover,
+  .rent-mode .astro-filters-toggle:focus {
+    color: var(--rent-text-hover);
+  }
+  
+  /* 🔹 Filter Panel Transitions */
+  .astro-filters-panel {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.45s cubic-bezier(.4, 0, .2, 1), opacity 0.3s;
+    will-change: max-height, opacity;
+  }
+  
+  .astro-filters-panel.show {
+    max-height: 1200px;
+    opacity: 1;
+    transition: max-height 0.55s cubic-bezier(.4, 0, .2, 1), opacity 0.4s;
+  }
+  
+/* Theme Buttons */
+.btn-sale, 
+.btn-rent {
+  border-radius: 6px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  border: 1px solid #e7eaf0 !important;
+  min-width: 80px;
+  opacity: 0.85;
+  box-shadow: none !important;
+  background: var(--sale-bg) !important;
+  color: var(--sale-text) !important;
+  transition: all 0.18s;
+}
+
+.btn-rent {
+  background: var(--rent-bg) !important;
+  color: var(--rent-text) !important;
+}
+
+.btn-sale:hover, 
+.btn-sale:focus {
+  background: var(--sale-bg-hover) !important;
+  color: var(--sale-text-hover) !important;
+  border-color: var(--sale-border) !important;
+  opacity: 1;
+  box-shadow: var(--sale-shadow-hover) !important;
+}
+
+.btn-rent:hover, 
+.btn-rent:focus {
+  background: var(--rent-bg-hover) !important;
+  color: var(--rent-text-hover) !important;
+  border-color: var(--rent-border) !important;
+  opacity: 1;
+  box-shadow: var(--rent-shadow-hover) !important;
+}
+
+.btn-sale-active, 
+.btn-rent-active {
+  font-weight: 600 !important;
+  position: relative;
+  z-index: 2;
+  min-width: 100px;
+  opacity: 1;
+  border-width: 1.5px !important;
+}
+
+.btn-sale-active {
+  background: var(--sale-bg-hover) !important;
+  color: var(--sale-text-hover) !important;
+  border-color: var(--sale-text-hover) !important;
+  box-shadow: var(--sale-shadow-hover) !important;
+}
+
+.btn-rent-active {
+  background: var(--rent-bg-hover) !important;
+  color: var(--rent-text-hover) !important;
+  border-color: var(--rent-text-hover) !important;
+  box-shadow: var(--rent-shadow-hover) !important;
+}
+
+/* Form Controls */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Utility Classes */
+.bg-sale { background-color: var(--sale-bg) !important; color: var(--sale-text) !important; }
+.text-sale { color: var(--sale-text) !important; }
+.border-sale { border-color: var(--sale-border) !important; }
+.shadow-sale { box-shadow: var(--sale-shadow) !important; }
+
+.bg-rent { background-color: var(--rent-bg) !important; color: var(--rent-text) !important; }
+.text-rent { color: var(--rent-text) !important; }
+.border-rent { border-color: var(--rent-border) !important; }
+.shadow-rent { box-shadow: var(--rent-shadow) !important; }
+
+/* ==================== */
+/* 5. ANIMATIONS */
+/* ==================== */
+@keyframes spin-3x-slowdown {
+  0% { transform: rotate(0deg); }
+  80% { transform: rotate(1080deg); }
+  100% { transform: rotate(1080deg); }
+}
+
+/* Анимация поворота стрелки фильтра */
+.astro-filters-toggle .fa-angle-down {
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+.astro-filters-toggle[aria-expanded="true"] .fa-angle-down {
+  transform: rotate(180deg);
+}
+
+/* ==================== */
+/* 6. MEDIA QUERIES */
+/* ==================== */
+@media (max-width: 768px) {
+  .categories .accordion-button,
+  .categories .list-group-item {
+    padding: 0.65rem 0.9rem !important;
+    font-size: 0.93rem !important;
+  }
+  
+  .categories .accordion-body {
+    padding-left: 1.2rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .listing-item .listing-title {
+    font-size: 1rem;
+  }
+  
+  .breadcrumb-custom {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.5rem;
+  }
+  
+  .astro-filters-panel.show { 
+    max-height: 2000px; 
+  }
+}
+
+@media (max-width: 991.98px) {
+    .navbar-nav .nav-item {
+        transition: background 0.18s, padding 0.18s;
+        border-radius: 8px;
+        padding: 0.7em 1.2em;
+    }
+
+    /* ==================== */
+    /* 4. COMPONENTS */
+    /* ==================== */
+
+    /* ==================== */
+    /* HEADER & NAVBAR */
+    /* ==================== */
+    .main-header {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        margin-bottom: 2.2rem;
+        background-color: var(--sale-bg, #fff);
+        backdrop-filter: none;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    /* Основной navbar */
+    .navbar {
+        background-color: inherit;
+        padding: 0.8rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Тематические режимы */
+    .sale-mode .main-header,
+    .sale-mode .navbar {
+        background-color: var(--sale-bg);
+        box-shadow: var(--sale-shadow);
+    }
+
+    .rent-mode .main-header,
+    .rent-mode .navbar {
+        background-color: var(--rent-bg);
+        box-shadow: var(--rent-shadow);
+    }
+
+    /* Бренд (логотип / название) */
+    .navbar-brand {
+        font-weight: 600;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .sale-mode .navbar-brand {
+        color: var(--sale-text);
+    }
+
+    .rent-mode .navbar-brand {
+        color: var(--rent-text);
+    }
+
+    /* Навигационные ссылки */
+    .navbar-nav .nav-link {
+        color: #495057;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .sale-mode .navbar-nav .nav-link {
+        color: var(--sale-text);
+    }
+
+    .rent-mode .navbar-nav .nav-link {
+        color: var(--rent-text);
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link:focus {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .sale-mode .navbar-nav .nav-link:hover,
+    .sale-mode .navbar-nav .nav-link:focus {
+        background-color: var(--sale-bg-hover);
+        color: var(--sale-text-hover);
+    }
+
+    .rent-mode .navbar-nav .nav-link:hover,
+    .rent-mode .navbar-nav .nav-link:focus {
+        background-color: var(--rent-bg-hover);
+        color: var(--rent-text-hover);
+    }
+
+    /* Кнопка бургер-меню */
+    .navbar-toggler {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.375rem 0.75rem;
+        background-color: transparent;
+        border-radius: 4px;
+    }
+
+    .sale-mode .navbar-toggler {
+        border-color: var(--sale-border);
+    }
+
+    .rent-mode .navbar-toggler {
+        border-color: var(--rent-border);
+    }
+
+    /* ==================== */
+    /* ADAPTIVE FIXES */
+    /* ADAPTIVE STYLES */
+    /* ==================== */
+
+    /* Мобильная и планшетная версия */
+    @media (max-width: 991.98px) {
+        .navbar-collapse {
+            width: 100%;
+            background-color: inherit; /* Используем текущую тему */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            overflow-x: hidden; /* защита от горизонтальных подвижек */
+        }
+
+        /* Темы */
+        .sale-mode .navbar-collapse {
+            background-color: var(--sale-bg);
+            box-shadow: var(--sale-shadow);
+        }
+
+        .rent-mode .navbar-collapse {
+            background-color: var(--rent-bg);
+            box-shadow: var(--rent-shadow);
+        }
+    }
+
+    /* Десктопная версия */
+    @media (min-width: 992px) {
+        .navbar-expand-lg .navbar-nav .nav-link {
+            margin: 0 0.25rem;
+        }
+    }
+
+
+    /* Listing Footer */
+    .listing-footer {
+        padding-top: 0.8rem;
+        border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* Дата публикации */
+    .listing-meta {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+        .listing-meta i {
+            font-size: 0.9em;
+            transition: opacity 0.2s;
+        }
+
+        .listing-meta:hover i {
+            opacity: 1;
+        }
+
+    /* Кнопка Подробнее */
+    .details-btn {
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        border-width: 1px;
+        border-style: solid;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-sale {
+        background-color: var(--sale-bg);
+        border-color: var(--sale-border);
+        color: var(--sale-text);
+    }
+
+    .btn-rent {
+        background-color: var(--rent-bg);
+        border-color: var(--rent-border);
+        color: var(--rent-text);
+    }
+
+    .details-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .details-btn:hover .transition-transform {
+            transform: translateX(2px);
+        }
+
+    .btn-sale:hover {
+        background-color: var(--sale-bg-hover);
+        color: var(--sale-text-hover);
+        box-shadow: var(--sale-shadow-hover);
+    }
+
+    .btn-rent:hover {
+        background-color: var(--rent-bg-hover);
+        color: var(--rent-text-hover);
+        box-shadow: var(--rent-shadow-hover);
+    }
+
+    /* Анимация стрелки */
+    .transition-transform {
+        transition: transform 0.2s ease-out;
+    }
+}

@@ -1,0 +1,109 @@
+﻿@using Microsoft.AspNetCore.Routing
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var area = ViewContext.RouteData.Values["area"]?.ToString();
+    var isMainContentPage = controller == "Home" || controller == "Listings";
+    var isIdentityPage = area == "Identity";
+
+    var query = Context?.Request?.Query;
+    var dealType = query?["dealType"].ToString().ToLower() ?? "";
+    var isSale = dealType == "sale" || string.IsNullOrEmpty(dealType);
+    var isRent = dealType == "rent";
+
+    var modeClass = isRent ? "rent-mode" : "sale-mode";
+    var shadowClass = isSale ? "shadow-sale" : isRent ? "shadow-rent" : "";
+}
+<!DOCTYPE html>
+<html lang="ru" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LocoRealt</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pagination.css" asp-append-version="true" />
+    <!-- Preload шрифтов -->
+    <link rel="preload" href="/css/font-awesome/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/font-awesome/css/all.min.css"></noscript>
+</head>
+<body class="@modeClass">
+    <header class="main-header sticky-top @shadowClass">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <!-- Логотип -->
+                <a class="navbar-brand fw-bold fs-4 light-hover logo-shadow" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-building"></i> LocoRealt
+                </a>
+
+                <!-- Гамбургер -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <!-- Главное меню -->
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-success mx-1 @(controller == "Listings" && action == "Create" ? "active" : "")"
+                               href="@(User.Identity?.IsAuthenticated == true ? Url.Action("Create", "Listings") : "#")"
+                               onclick="@(User.Identity?.IsAuthenticated != true ? "alert('Для добавления объявления необходимо войти в систему'); return false;" : "")">
+                                <i class="bi bi-plus-circle"></i> Добавить объявление
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(controller == "Home" && action == "Contact" ? "active" : "")"
+                               asp-controller="Home" asp-action="Contact">
+                                <i class="bi bi-envelope"></i> Контакты
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <partial name="_LoginPartial" />
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основное содержимое -->
+    <main role="main" class="">
+        <div class="container">
+            <div class="row">
+                <!-- Центральная колонка -->
+                <div class="@(isMainContentPage ? "" : "")">
+                    @RenderBody()
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="border-top footer text-muted py-3 mt-4">
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-md-start">
+                    &copy; @DateTime.Now.Year - LocoRealt
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Политика конфиденциальности</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
